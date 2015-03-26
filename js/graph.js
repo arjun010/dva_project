@@ -23,35 +23,35 @@ function drawGraph(){
 	  graphZoomContainer.attr("transform","translate(" + d3.event.translate + ")"+ " scale(" + d3.event.scale + ")");
 	}	
 	var links = [
-	  {source: "Microsoft", target: "Amazon", type: "suit", weight: "10"},
-	  {source: "Microsoft", target: "HTC", type: "suit", weight: "20"},
-	  {source: "Samsung", target: "Apple", type: "suit", weight: "5"},
-	  {source: "Motorola", target: "Apple", type: "suit", weight: "50"},
-	  {source: "Nokia", target: "Apple", type: "suit", weight: "10"},
-	  {source: "HTC", target: "Apple", type: "suit", weight: "14"},
-	  {source: "Kodak", target: "Apple", type: "suit", weight: "10"},
-	  {source: "Microsoft", target: "Barnes & Noble", type: "suit", weight: "25"},
-	  {source: "Microsoft", target: "Foxconn", type: "suit", weight: "30"},
-	  {source: "Oracle", target: "Google", type: "suit", weight: "30"},
-	  {source: "Apple", target: "HTC", type: "suit", weight: "10" },
-	  {source: "Microsoft", target: "Inventec", type: "suit", weight: "10"},
-	  {source: "Samsung", target: "Kodak", type: "suit", weight: "10"},
-	  {source: "LG", target: "Kodak", type: "suit", weight: "10"},
-	  {source: "RIM", target: "Kodak", type: "suit", weight: "20"},
-	  {source: "Sony", target: "LG", type: "suit", weight: "10"},
-	  {source: "Kodak", target: "LG", type: "suit", weight: "2"},
-	  {source: "Apple", target: "Nokia", type: "suit", weight: "35"},
-	  {source: "Qualcomm", target: "Nokia", type: "suit", weight: "40"},
-	  {source: "Apple", target: "Motorola", type: "suit", weight: "10"},
-	  {source: "Microsoft", target: "Motorola", type: "suit", weight: "10"},
-	  {source: "Motorola", target: "Microsoft", type: "suit", weight: "10"},
-	  {source: "Huawei", target: "ZTE", type: "suit", weight: "20"},
-	  {source: "Ericsson", target: "ZTE", type: "suit", weight: "10"},
-	  {source: "Kodak", target: "Samsung", type: "suit", weight: "15"},
-	  {source: "Apple", target: "Samsung", type: "suit", weight: "30"},
-	  {source: "Kodak", target: "RIM", type: "suit", weight: "15"},
-	  {source: "Nokia", target: "Qualcomm", type: "suit", weight: "10"},
-	  {source: "Nokia", target: "Nokia", type: "suit", weight: "10"}
+	  {source: "station1", target: "station2", type: "directed", weight: "10"},
+	  {source: "station1", target: "station3", type: "directed", weight: "20"},
+	  {source: "station5", target: "station4", type: "directed", weight: "5"},
+	  {source: "station6", target: "station4", type: "directed", weight: "50"},
+	  {source: "station7", target: "station4", type: "directed", weight: "10"},
+	  {source: "station3", target: "station4", type: "directed", weight: "14"},
+	  {source: "station8", target: "station4", type: "directed", weight: "10"},
+	  {source: "station1", target: "station9", type: "directed", weight: "25"},
+	  {source: "station1", target: "station10", type: "directed", weight: "30"},
+	  {source: "station11", target: "station12", type: "directed", weight: "30"},
+	  {source: "station4", target: "station3", type: "directed", weight: "10" },
+	  {source: "station1", target: "station13", type: "directed", weight: "10"},
+	  {source: "station5", target: "station8", type: "directed", weight: "10"},
+	  {source: "station14", target: "station8", type: "directed", weight: "10"},
+	  {source: "station16", target: "station8", type: "directed", weight: "20"},
+	  {source: "station15", target: "station14", type: "directed", weight: "10"},
+	  {source: "station8", target: "station14", type: "directed", weight: "2"},
+	  {source: "station4", target: "station7", type: "directed", weight: "35"},
+	  {source: "station17", target: "station7", type: "directed", weight: "40"},
+	  {source: "station4", target: "station6", type: "directed", weight: "10"},
+	  {source: "station1", target: "station6", type: "directed", weight: "10"},
+	  {source: "station6", target: "station1", type: "directed", weight: "10"},
+	  {source: "station18", target: "station19", type: "directed", weight: "20"},
+	  {source: "station20", target: "station19", type: "directed", weight: "10"},
+	  {source: "station8", target: "station5", type: "directed", weight: "15"},
+	  {source: "station4", target: "station5", type: "directed", weight: "30"},
+	  {source: "station8", target: "station16", type: "directed", weight: "15"},
+	  {source: "station7", target: "station17", type: "directed", weight: "10"},
+	  {source: "station7", target: "station7", type: "directed", weight: "10"}
 	];
 
 	var nodes = {};
@@ -89,7 +89,7 @@ function drawGraph(){
 	var graphZoomContainer = svg.append("g").attr("class","graphzoomcontainer");
 	// Per-type markers, as they don't inherit styles.
 	graphZoomContainer.append("defs").selectAll("marker")
-	    .data(["suit", "licensing", "resolved"])
+	    .data(["directed"])
 	  	.enter().append("marker")
 	    .attr("id", function(d) { return d; })
 	    .attr("viewBox", "0 -5 10 10")
@@ -202,10 +202,10 @@ function drawGraph(){
 		text.remove();
 
 		links = [
-		  {source: "Kodak", target: "Samsung", type: "suit", weight: "15"},
-		  {source: "Apple", target: "Samsung", type: "suit", weight: "30"},
-		  {source: "Kodak", target: "RIM", type: "suit", weight: "15"},
-		  {source: "Nokia", target: "Qualcomm", type: "suit", weight: "10"}	  
+		  {source: "station8", target: "station5", type: "directed", weight: "15"},
+		  {source: "station4", target: "station5", type: "directed", weight: "30"},
+		  {source: "station8", target: "station16", type: "directed", weight: "15"},
+		  {source: "station7", target: "station17", type: "directed", weight: "10"}	  
 		];
 		
 		nodes = {};
@@ -225,7 +225,7 @@ function drawGraph(){
 			    .start();
 
 		graphZoomContainer.append("defs").selectAll("marker")
-	    .data(["suit", "licensing", "resolved"])
+	    .data(["directed", "licensing", "resolved"])
 	    .enter().append("marker")
 	    .attr("id", function(d) { return d; })
 	    .attr("viewBox", "0 -5 10 10")
