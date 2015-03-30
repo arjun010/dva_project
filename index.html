@@ -13,8 +13,6 @@
 		  stroke-width: 1.5px;
 		}
 
-		
-
 		circle {
 		  fill: #ccc;
 		  stroke: #333;
@@ -24,9 +22,24 @@
 		text {
 		  font: 10px sans-serif;
 		  pointer-events: none;
-		}
-
+		}		
 	</style>
+	<script type="text/javascript">
+		var globalLinks = [];
+		var allTrips = (function() {
+	        var json = null;
+	        $.ajax({
+	            'async': false,
+	            'global': false,
+	            'url': "data/trips.json",
+	            'dataType': "json",
+	            'success': function (data) {
+	                json = data;
+	            }
+	        });
+	        return json;
+	    })();
+	</script>
 </head>
 <body style="background-color:#FDFDFD;">
 	<div id="maincontent" class="col-sm-10">
@@ -70,6 +83,22 @@
 				</div>
 			  </div>
 		</div>
+		<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+			  <div class="panel panel-default">
+				<div class="panel-heading" role="tab" id="headingThree">
+				  <h4 class="panel-title">
+					<a data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="true" aria-controls="collapseThree">
+					  Some Filter
+					</a>
+				  </h4>
+				</div>
+				<div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
+				  <div class="panel-body" id="selectedstationdetails">
+						<button onclick="computeLinks()">Compute</button>
+				  </div>
+				</div>
+			  </div>
+		</div>
 	</div>	
 </body>
 <script type="text/javascript" src="js/graph.js"></script>
@@ -77,5 +106,40 @@
 	$( document ).ready(function() {
     	drawGraph();
 	});
+	var minWeight = 99999999, maxWeight = 0;
+	function computeLinks(){
+		var sourceTargetDict = {};
+		for(var i=0;i<allTrips.length;i++){
+			var sourceTargetPair = [parseInt(allTrips[i].source),parseInt(allTrips[i].target)];
+			if (!(sourceTargetPair in Object.keys(sourceTargetDict)))
+			{
+				sourceTargetDict[sourceTargetPair] = 0;
+			}
+		}
+		for(var i=0;i<allTrips.length;i++){
+			var sourceTargetPair = [parseInt(allTrips[i].source),parseInt(allTrips[i].target)];
+			sourceTargetDict[sourceTargetPair] += 1;			
+		}
+		var resList = [];
+		var edgeList = Object.keys(sourceTargetDict);
+		for(var i=0;i<edgeList.length;i++){
+			var edge = edgeList[i];
+			//console.log(edge)
+			//console.log(sourceTargetDict[edge])
+			var sourceStation = edge.split(",")[0];
+			var targetStation = edge.split(",")[1];
+			//console.log(sourceStation)
+			//console.log(targetStation)
+			resList.push({"source":sourceStation,"target":targetStation,"type":"directed","weight":sourceTargetDict[edge]})
+			if(minWeight>sourceTargetDict[edge]){
+				minWeight = sourceTargetDict[edge];
+			}
+			if(maxWeight<sourceTargetDict[edge]){
+				maxWeight = sourceTargetDict[edge];
+			}
+		}
+		globalLinks = resList.slice();
+		console.log(globalLinks)
+	}
 </script>
 </html>

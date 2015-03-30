@@ -56,7 +56,7 @@ function drawGraph(){
 
 	var nodes = {};
 
-	var scale = d3.scale.linear().domain([2,50]).range([1,8]);
+	var scale = d3.scale.linear().domain([minWeight,maxWeight]).range([1,4]);
 	// Compute the distinct nodes from the links.
 	links.forEach(function(link) {
 	  link.source = nodes[link.source] || (nodes[link.source] = {name: link.source});
@@ -67,7 +67,7 @@ function drawGraph(){
 	    height = document.getElementById("sidepanel").offsetHeight;
 
 	var zoom = d3.behavior.zoom()
-    .scaleExtent([1, 10])
+    .scaleExtent([0.2, 10])
     .on("zoom", graphVizZoom);
 
 
@@ -75,9 +75,10 @@ function drawGraph(){
 	    .nodes(d3.values(nodes))
 	    .links(links)
 	    .size([width, height])
-	    .linkDistance(100)
-	    .charge(-300)
+	    .linkDistance(250)
+	    .charge(-5000)
 	    .on("tick", tick)
+	    .alpha(-1)
 	    .start();
 
 	var svg = d3.select("#graphviz").append("svg")
@@ -201,13 +202,11 @@ function drawGraph(){
 		circle.remove();
 		text.remove();
 
-		links = [
-		  {source: "station8", target: "station5", type: "directed", weight: "15"},
-		  {source: "station4", target: "station5", type: "directed", weight: "30"},
-		  {source: "station8", target: "station16", type: "directed", weight: "15"},
-		  {source: "station7", target: "station17", type: "directed", weight: "10"}	  
-		];
-		
+		//links = [];
+		computeLinks();
+		links = globalLinks.slice();
+		console.log(links);
+
 		nodes = {};
 
 		links.forEach(function(link) {
@@ -219,9 +218,10 @@ function drawGraph(){
 			    .nodes(d3.values(nodes))
 			    .links(links)
 			    .size([width, height])
-			    .linkDistance(60)
-			    .charge(-300)
+			    .linkDistance(150)
+	    		.charge(-1000)
 			    .on("tick", tick)
+			    .alpha(1)
 			    .start();
 
 		graphZoomContainer.append("defs").selectAll("marker")
@@ -258,7 +258,7 @@ function drawGraph(){
 				if(o.source.name==d.name){
 					return 1;
 				}else{
-					return 0.2;
+					return 0.1;
 				}
 			});	    
 		    })
