@@ -328,7 +328,7 @@ nv.addGraph(function() {
       .call(chart);
 
   nv.utils.windowResize(chart.update);
-
+  //d3.selectAll(".tick").remo();
   return chart;
 });
 
