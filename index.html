@@ -22,8 +22,11 @@
 		text {
 		  font: 10px sans-serif;
 		  pointer-events: none;
-		}		
+		}				
+
 	</style>
+	<link rel="stylesheet" type="text/css" href="css/nv.d3.css">
+	<script type="text/javascript" src="js/nv.d3.min.js"></script>
 	<script type="text/javascript">
 		var globalLinks = [];
 		var allTrips = (function() {
@@ -38,29 +41,50 @@
 	            }
 	        });
 	        return json;
-	    })();
+	    })();	
+	    var tempBar = (function() {
+	        var json = null;
+	        $.ajax({
+	            'async': false,
+	            'global': false,
+	            'url': "data/tempBar.json",
+	            'dataType': "json",
+	            'success': function (data) {
+	                json = data;
+	            }
+	        });
+	        return json;
+	    })();	
+	    console.log(tempBar)
+	    var minWeight = 999,maxWeight = 0;    
 	</script>
 </head>
 <body style="background-color:#FDFDFD;">
 	<div id="maincontent" class="col-sm-10">
-		<div id="graphviz"></div>
+		<div id="graphviz" style="height:70%;"></div>
+		<div id="statvizes" style="height:30%;">
+		<div id="barchart" style="float:left;width:700px"><svg></svg>			
+		</div>
+		<div id="donutchart1" style="float:left;width:400px"><svg></svg>		
+		</div>
+		<div id="donutchart2"style="float:right;width:400px"><svg></svg>	
+		</div>
+		</div>
 	</div>		
 	<div id="sidepanel" class="col-sm-2" style="background-color:gray;height:100%;">
 		<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
 			  <div class="panel panel-default">
 				<div class="panel-heading" role="tab" id="headingOne">
 				  <h4 class="panel-title">
-					<a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-					  Some Filter
+					<a data-toggle="collapse" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+					  Date Filter
 					</a>
 				  </h4>
 				</div>
 				<div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
-				  <div class="panel-body">
-					  <select id="somefilter">
-					  	 <option>option 1</option>
-					  	 <option>option 2</option>
-					  </select>
+				  <div class="panel-body" align="center">
+					  <select id="startdate"></select> 2013 to 
+					  <select id="enddate"></select> 2014<br/><br/>					  
 				  </div>
 				</div>
 			  </div>
@@ -69,8 +93,8 @@
 			  <div class="panel panel-default">
 				<div class="panel-heading" role="tab" id="headingTwo">
 				  <h4 class="panel-title">
-					<a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
-					  Selected Station
+					<a data-toggle="collapse" href="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
+					  Selected Station Details
 					</a>
 				  </h4>
 				</div>
@@ -87,26 +111,45 @@
 			  <div class="panel panel-default">
 				<div class="panel-heading" role="tab" id="headingThree">
 				  <h4 class="panel-title">
-					<a data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="true" aria-controls="collapseThree">
-					  Some Filter
+					<a data-toggle="collapse" href="#collapseThree" aria-expanded="true" aria-controls="collapseThree">
+					  Climate Filter
 					</a>
 				  </h4>
 				</div>
 				<div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
 				  <div class="panel-body" id="selectedstationdetails">
-						<button onclick="computeLinks()">Compute</button>
+						<input type="checkbox" id="sunnyweather">Sunny</input><br/>
+						<div style="margin-left:13px;">
+						<input type="checkbox" id="sunny1">Less</input>   <input type="checkbox" id="sunny2">Moderate</input>   <input type="checkbox" id="sunny3">Extreme</input>
+						</div>
+						<input type="checkbox" id="foggyweather">Fog</input><br/>
+						<div style="margin-left:13px;">
+						<input type="checkbox" id="fog1">Less</input>   <input type="checkbox" id="fog2">Moderate</input>   <input type="checkbox" id="fog3">Extreme</input>
+						</div>
+						<input type="checkbox" id="rainyweather">Rain</input><br/>
+						<div style="margin-left:13px;">
+						<input type="checkbox" id="rain1">Less</input>   <input type="checkbox" id="rain2">Moderate</input>   <input type="checkbox" id="rain3">Extreme</input>
+						</div>
 				  </div>
 				</div>
 			  </div>
 		</div>
+		<div align="center">
+		<button id="datefilterapplybutton">Apply Filters</button>
+		</div>
 	</div>	
 </body>
-<script type="text/javascript" src="js/graph.js"></script>
 <script type="text/javascript">
 	$( document ).ready(function() {
+		for(var i=8;i<12;i++){
+		  $("#startdate").append('<option value="'+i+'">'+i+'</option>');
+		}
+		for(var i=8;i>=1;i--){
+		  $("#enddate").append('<option value="'+i+'">'+i+'</option>');
+		}
+
     	drawGraph();
-	});
-	var minWeight = 99999999, maxWeight = 0;
+	});	
 	function computeLinks(){
 		var sourceTargetDict = {};
 		for(var i=0;i<allTrips.length;i++){
@@ -141,5 +184,40 @@
 		globalLinks = resList.slice();
 		console.log(globalLinks)
 	}
+	function computeLinksForDates(){
+		var sourceTargetDict = {};
+		for(var i=0;i<2103;i++){
+			var sourceTargetPair = [parseInt(allTrips[i].source),parseInt(allTrips[i].target)];
+			if (!(sourceTargetPair in Object.keys(sourceTargetDict)))
+			{
+				sourceTargetDict[sourceTargetPair] = 0;
+			}
+		}
+		for(var i=0;i<2103;i++){
+			var sourceTargetPair = [parseInt(allTrips[i].source),parseInt(allTrips[i].target)];
+			sourceTargetDict[sourceTargetPair] += 1;			
+		}
+		var resList = [];
+		var edgeList = Object.keys(sourceTargetDict);
+		for(var i=0;i<edgeList.length;i++){
+			var edge = edgeList[i];
+			//console.log(edge)
+			//console.log(sourceTargetDict[edge])
+			var sourceStation = edge.split(",")[0];
+			var targetStation = edge.split(",")[1];
+			//console.log(sourceStation)
+			//console.log(targetStation)
+			resList.push({"source":sourceStation,"target":targetStation,"type":"directed","weight":sourceTargetDict[edge]})
+			if(minWeight>parseInt(sourceTargetDict[edge])){
+				minWeight = parseInt(sourceTargetDict[edge]);
+			}
+			if(maxWeight<parseInt(sourceTargetDict[edge])){
+				maxWeight = parseInt(sourceTargetDict[edge]);
+			}
+		}
+		//console.log(minWeight,maxWeight)
+		globalLinks = resList.slice();
+	}
 </script>
+<script type="text/javascript" src="js/graph.js"></script>
 </html>

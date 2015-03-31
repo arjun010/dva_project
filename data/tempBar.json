@@ -1,0 +1,27 @@
+ [ 
+    {
+      "key": "Cumulative Return",
+      "values": [
+        { 
+          "label" : "A Label" ,
+          "value" : 12
+        } , 
+        { 
+          "label" : "B Label" , 
+          "value" : 20
+        } , 
+        { 
+          "label" : "C Label" , 
+          "value" : 15
+        } , 
+        { 
+          "label" : "D Label" , 
+          "value" : 10
+        } , 
+        { 
+          "label" : "E Label" ,
+          "value" : 8
+        }
+      ]
+    }
+]

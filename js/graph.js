@@ -22,41 +22,12 @@ function drawGraph(){
 	function graphVizZoom() {
 	  graphZoomContainer.attr("transform","translate(" + d3.event.translate + ")"+ " scale(" + d3.event.scale + ")");
 	}	
-	var links = [
-	  {source: "station1", target: "station2", type: "directed", weight: "10"},
-	  {source: "station1", target: "station3", type: "directed", weight: "20"},
-	  {source: "station5", target: "station4", type: "directed", weight: "5"},
-	  {source: "station6", target: "station4", type: "directed", weight: "50"},
-	  {source: "station7", target: "station4", type: "directed", weight: "10"},
-	  {source: "station3", target: "station4", type: "directed", weight: "14"},
-	  {source: "station8", target: "station4", type: "directed", weight: "10"},
-	  {source: "station1", target: "station9", type: "directed", weight: "25"},
-	  {source: "station1", target: "station10", type: "directed", weight: "30"},
-	  {source: "station11", target: "station12", type: "directed", weight: "30"},
-	  {source: "station4", target: "station3", type: "directed", weight: "10" },
-	  {source: "station1", target: "station13", type: "directed", weight: "10"},
-	  {source: "station5", target: "station8", type: "directed", weight: "10"},
-	  {source: "station14", target: "station8", type: "directed", weight: "10"},
-	  {source: "station16", target: "station8", type: "directed", weight: "20"},
-	  {source: "station15", target: "station14", type: "directed", weight: "10"},
-	  {source: "station8", target: "station14", type: "directed", weight: "2"},
-	  {source: "station4", target: "station7", type: "directed", weight: "35"},
-	  {source: "station17", target: "station7", type: "directed", weight: "40"},
-	  {source: "station4", target: "station6", type: "directed", weight: "10"},
-	  {source: "station1", target: "station6", type: "directed", weight: "10"},
-	  {source: "station6", target: "station1", type: "directed", weight: "10"},
-	  {source: "station18", target: "station19", type: "directed", weight: "20"},
-	  {source: "station20", target: "station19", type: "directed", weight: "10"},
-	  {source: "station8", target: "station5", type: "directed", weight: "15"},
-	  {source: "station4", target: "station5", type: "directed", weight: "30"},
-	  {source: "station8", target: "station16", type: "directed", weight: "15"},
-	  {source: "station7", target: "station17", type: "directed", weight: "10"},
-	  {source: "station7", target: "station7", type: "directed", weight: "10"}
-	];
+	
+	var links = [];
 
 	var nodes = {};
-
-	var scale = d3.scale.linear().domain([minWeight,maxWeight]).range([1,4]);
+	//console.log(minWeight,maxWeight)
+	var scale = d3.scale.log().domain([1,5]).range([1,4]);
 	// Compute the distinct nodes from the links.
 	links.forEach(function(link) {
 	  link.source = nodes[link.source] || (nodes[link.source] = {name: link.source});
@@ -64,7 +35,7 @@ function drawGraph(){
 	});
 	
 	var width = document.getElementById("graphviz").offsetWidth,
-	    height = document.getElementById("sidepanel").offsetHeight;
+	    height = document.getElementById("graphviz").offsetHeight;
 
 	var zoom = d3.behavior.zoom()
     .scaleExtent([0.2, 10])
@@ -75,8 +46,8 @@ function drawGraph(){
 	    .nodes(d3.values(nodes))
 	    .links(links)
 	    .size([width, height])
-	    .linkDistance(250)
-	    .charge(-5000)
+	    .linkDistance(150)
+	    .charge(-1000)
 	    .on("tick", tick)
 	    .alpha(-1)
 	    .start();
@@ -110,6 +81,7 @@ function drawGraph(){
 	    .attr("class", "link")
 	    .attr("marker-end", function(d) { return "url(#" + d.type + ")"; })
 	    .style("stroke-width",function(d){
+
 	    	return scale(parseInt(d.weight));
 	    });
 
@@ -193,19 +165,27 @@ function drawGraph(){
 	  return "translate(" + d.x + "," + d.y + ")";
 	}
 
-	d3.select("#somefilter").on("change",function(){
-		updateViz();		
+	d3.select("#datefilterapplybutton").on("click",function(){
+		updateGraphViz();		
+		drawBarChart();
+		//d3.select("#donutchart1").append("svg");
+		drawDonutChart1();
+		drawDonutChart2();
 	});
 
-	function updateViz(){
+	function updateGraphViz(){
 		path.remove();
 		circle.remove();
 		text.remove();
-
+		//console.log(minWeight,maxWeight)
+		
 		//links = [];
-		computeLinks();
+		//computeLinks();
+		computeLinksForDates();
+		//console.log(minWeight,maxWeight)
+		scale = d3.scale.log().domain([minWeight,maxWeight]).range([1,4]);
 		links = globalLinks.slice();
-		console.log(links);
+		//console.log(links);
 
 		nodes = {};
 
@@ -245,6 +225,8 @@ function drawGraph(){
 		    .attr("class", function(d) { return "link " + d.type; })
 		    .attr("marker-end", function(d) { return "url(#" + d.type + ")"; })
 		    .style("stroke-width",function(d){
+		    	//console.log(parseInt(d.weight))
+		    	//console.log(scale(parseInt(d.weight)))		    	
 		    	return scale(parseInt(d.weight));
 		    });
 
@@ -326,4 +308,100 @@ function drawGraph(){
 
 	}
 
+}
+
+function drawBarChart(){
+
+nv.addGraph(function() {
+  var chart = nv.models.discreteBarChart()
+      .x(function(d) { return d.label })    //Specify the data accessors.
+      .y(function(d) { return d.value })
+      .staggerLabels(true)    //Too many bars and not enough room? Try staggering labels.
+      .tooltips(false)        //Don't show tooltips
+      .showValues(true)       //...instead, show the bar value right on top of each bar.
+      ;
+
+      
+
+  d3.select('#barchart svg')
+      .datum(tempBar)
+      .call(chart);
+
+  nv.utils.windowResize(chart.update);
+
+  return chart;
+});
+
+}
+
+function drawDonutChart1(){
+	//Donut chart example
+nv.addGraph(function() {
+  var chart = nv.models.pieChart()
+      .x(function(d) { return d.label })
+      .y(function(d) { return d.value })
+      .showLabels(true)     //Display pie labels
+      .labelThreshold(.05)  //Configure the minimum slice size for labels to show up
+      .labelType("percent") //Configure what type of data to show in the label. Can be "key", "value" or "percent"
+      .donut(true)          //Turn on Donut mode. Makes pie chart look tasty!
+      .donutRatio(0.35)     //Configure how big you want the donut hole size to be.
+      ;
+
+    d3.select("#donutchart1 svg")
+        .datum(exampleData())
+        .transition().duration(350)
+        .call(chart);
+
+  return chart;
+});
+
+//Pie chart example data. Note how there is only a single array of key-value pairs.
+function exampleData() {
+  return  [
+      { 
+        "label": "One",
+        "value" : 20
+      } , 
+      { 
+        "label": "Two",
+        "value" : 10
+      }
+    ];
+}
+}
+
+function drawDonutChart2(){
+	//Donut chart example
+nv.addGraph(function() {
+  var chart = nv.models.pieChart()
+      .x(function(d) { return d.label })
+      .y(function(d) { return d.value })
+      .showLabels(true)     //Display pie labels
+      .labelThreshold(.05)  //Configure the minimum slice size for labels to show up
+      .labelType("percent") //Configure what type of data to show in the label. Can be "key", "value" or "percent"
+      .donut(true)          //Turn on Donut mode. Makes pie chart look tasty!
+      .donutRatio(0.35)     //Configure how big you want the donut hole size to be.
+      ;
+
+    d3.select("#donutchart2 svg")
+        .datum(exampleData())
+        .transition().duration(350)
+        .call(chart);
+
+  return chart;
+});
+
+//Pie chart example data. Note how there is only a single array of key-value pairs.
+function exampleData() {
+  return  [
+      { 
+        "label": "One",
+        "value" : 25
+      } , 
+      { 
+        "label": "Two",
+        "value" : 5
+      }
+    ];
+}
 }
