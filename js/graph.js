@@ -165,7 +165,7 @@ function drawGraph(){
 	  return "translate(" + d.x + "," + d.y + ")";
 	}
 
-	d3.select("#datefilterapplybutton").on("click",function(){
+	d3.select("#applyfilterbutton").on("click",function(){
 		updateGraphViz();		
 		drawBarChart();
 		//d3.select("#donutchart1").append("svg");
