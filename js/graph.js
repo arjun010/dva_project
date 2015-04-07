@@ -327,6 +327,8 @@ nv.addGraph(function() {
       .datum(tempBar)
       .call(chart);
 
+console.log(tempBar)
+
   nv.utils.windowResize(chart.update);
   //d3.selectAll(".tick").remo();
   return chart;

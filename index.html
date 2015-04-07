@@ -66,12 +66,12 @@
 	<div id="maincontent" class="col-sm-10">
 		<div id="graphviz" style="height:70%;"></div>
 		<div id="statvizes" style="height:30%;">
-		<div id="barchart" style="float:left;width:700px"><svg></svg>			
-		</div>
-		<div id="donutchart1" style="float:left;width:400px"><svg></svg>		
-		</div>
-		<div id="donutchart2"style="float:right;width:400px"><svg></svg>	
-		</div>
+			<div id="barchart" style="float:left;width:700px"><svg></svg>			
+			</div>
+			<div id="donutchart1" style="float:left;width:400px"><svg></svg>		
+			</div>
+			<div id="donutchart2"style="float:right;width:400px"><svg></svg>	
+			</div>
 		</div>
 	</div>		
 	<div id="sidepanel" class="col-sm-2" style="background-color:gray;height:100%;">
@@ -86,7 +86,7 @@
 				</div>
 				<div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
 				  <div class="panel-body" align="center">
-					  <select id="startdate"></select> 2013 to 
+					  <select onchange="drawBarChart()" id="startdate"></select> 2013 to 
 					  <select id="enddate"></select> 2014<br/><br/>					  
 				  </div>
 				</div>
