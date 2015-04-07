@@ -62,31 +62,60 @@
 	    var minWeight = 999,maxWeight = 0;    
 	</script>
 </head>
-<body style="background-color:#FDFDFD;">
+<body style="background-color:#F8F8F8;">
 	<div id="maincontent" class="col-sm-10">
-		<div id="graphviz" style="height:70%;"></div>
-		<div id="statvizes" style="height:30%;">
-			<div id="barchart" style="float:left;width:700px"><svg></svg>			
-			</div>
-			<div id="donutchart1" style="float:left;width:400px"><svg></svg>		
-			</div>
-			<div id="donutchart2"style="float:right;width:400px"><svg></svg>	
-			</div>
 		<div id="explorerviewvizdiv">
-			<div id="graphviz" style="height:70%;"></div>
-			<div id="statvizes" style="height:30%;">
-			<div id="barchart" style="float:left;width:33%;"><svg></svg>			
+			<div id="networkviz" style="height:70%;">
+				<div style="float:left;width:15%;">
+					<div id="smallgraphviz" style="height:30%;border: 1px solid #a1a1a1;background-color:#FFFFFF;">	
+					</div>
+					<div id="stationdetails" style="height:70%;border: 1px solid #a1a1a1;background-color:#FFFFFF;">
+						<div align="center">
+							Station-name: <p style="font-size:35px;" id="selectedstationname"></p>
+							City: <p style="font-size:35px;">San Francisco</p>
+							In-degree: <p style="font-size:35px;" id="selectedstationindegree"></p>
+							Out-degree: <p style="font-size:35px;" id="selectedstationoutdegree"></p>	
+						</div>
+					</div>
+				</div>
+				<div style="float:right;width:85%;" id="graphviz">					
+				</div>
 			</div>
-			<div id="donutchart1" style="float:left;width:33%;"><svg></svg>		
-			</div>
-			<div id="donutchart2"style="float:right;width:33%;"><svg></svg>	
-			</div>
+			<div id="statvizes" style="height:30%;background-color:#E8E8E8;">
+				<div id="barchart" style="float:left;width:33%;"><svg></svg>			
+				</div>
+				<div id="donutchart1" style="float:left;width:33%;"><svg></svg>		
+				</div>
+				<div id="donutchart2"style="float:right;width:33%;"><svg></svg>	
+				</div>
 			</div>
 		</div>
 		<div id="predictionviewvizdiv" class="hide">
+			<div id="networkviz" style="height:70%;">
+				<div style="float:left;width:15%;">
+					<div id="smallgraphviz" style="height:30%;border: 1px solid #a1a1a1;">	
+					</div>
+					<div id="stationdetails" style="height:70%;border: 1px solid #a1a1a1;">
+						<div align="center">
+							Station-name: <p id="selectedstationname"></p>
+							In-degree: <p id="selectedstationindegree"></p>
+							Out-degree: <p id="selectedstationoutdegree"></p>	
+						</div>
+					</div>
+				</div>
+				<div style="float:right;width:85%;" id="graphviz">					
+				</div>
+			</div>
+			<div id="statvizes" style="height:30%;background-color:#E8E8E8;">
+				<div id="barchart" style="float:left;width:33%;"><svg></svg>			
+				</div>
+				<div id="donutchart1" style="float:left;width:33%;"><svg></svg>		
+				</div>
+				<div id="donutchart2"style="float:right;width:33%;"><svg></svg>	
+				</div>
+			</div>
 		</div>
 	</div>		
-	</div>
 	<div id="sidepanel" class="col-sm-2" style="background-color:gray;height:100%;">
 		<div id="modeselect" align="center" >
 			<form>
@@ -106,7 +135,7 @@
 				</div>
 				<div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
 				  <div class="panel-body" align="center">
-					  <select onchange="drawBarChart()" id="startdate"></select> 2013 to 
+					  <select id="startdate"></select> 2013 to 
 					  <select id="enddate"></select> 2014<br/><br/>					  
 				  </div>
 				</div>
@@ -117,15 +146,14 @@
 				<div class="panel-heading" role="tab" id="headingTwo">
 				  <h4 class="panel-title">
 					<a data-toggle="collapse" href="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
-					  Selected Station Details
+					  Trip Length
 					</a>
 				  </h4>
 				</div>
 				<div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
-				  <div class="panel-body" id="selectedstationdetails">
-						Station-name: <p id="selectedstationname"></p>
-						In-degree: <p id="selectedstationindegree"></p>
-						Out-degree: <p id="selectedstationoutdegree"></p>						
+				  <div class="panel-body" id="selectedstationdetails" align="center">
+					  <select id="starttime"></select> min to 
+					  <select id="endtime"></select> min<br/><br/>	
 				  </div>
 				</div>
 			  </div>
@@ -156,14 +184,45 @@
 				  </div>
 				</div>
 			  </div>
+			<br/>
+			<div align="center">
+				<button id="applyfilterbutton">Apply Filters</button>
+			</div>
+		</div>
 		</div>
 		<div id="predictionviewpanel" class="hide">
-			hi
-		</div>
-		<div align="center">
-		<button id="applyfilterbutton">Apply Filters</button>
-		</div>
-		</div>
+			
+		<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+			  <div class="panel panel-default">
+				<div class="panel-heading" role="tab" id="headingFour">
+				  <h4 class="panel-title">
+					<a data-toggle="collapse" href="#collapseFour" aria-expanded="true" aria-controls="collapseFour">
+					  Climatic Conditions
+					</a>
+				  </h4>
+				</div>
+				<div id="collapseFour" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingFour">
+				  <div class="panel-body" id="selectedstationdetails">
+						<input type="checkbox" id="sunnyweather">Sunny</input><br/>
+						<div style="margin-left:13px;">
+						<input type="checkbox" id="sunny1">Less</input>   <input type="checkbox" id="sunny2">Moderate</input>   <input type="checkbox" id="sunny3">Extreme</input>
+						</div>
+						<input type="checkbox" id="foggyweather">Fog</input><br/>
+						<div style="margin-left:13px;">
+						<input type="checkbox" id="fog1">Less</input>   <input type="checkbox" id="fog2">Moderate</input>   <input type="checkbox" id="fog3">Extreme</input>
+						</div>
+						<input type="checkbox" id="rainyweather">Rain</input><br/>
+						<div style="margin-left:13px;">
+						<input type="checkbox" id="rain1">Less</input>   <input type="checkbox" id="rain2">Moderate</input>   <input type="checkbox" id="rain3">Extreme</input>
+						</div>
+				  </div>
+				</div>
+			  </div>
+			<br/>
+			<div align="center">
+				<button id="predictbutton">Predict Network</button>
+			</div>
+		</div>				
 	</div>	
 </body>
 <script type="text/javascript">
@@ -173,6 +232,12 @@
 		}
 		for(var i=8;i>=1;i--){
 		  $("#enddate").append('<option value="'+i+'">'+i+'</option>');
+		}
+		for(var i=1;i<999;i++){
+		  $("#starttime").append('<option value="'+i+'">'+i+'</option>');
+		}
+		for(var i=999;i>=1;i--){
+		  $("#endtime").append('<option value="'+i+'">'+i+'</option>');
 		}
 
     	drawGraph();
