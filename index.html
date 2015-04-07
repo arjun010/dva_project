@@ -72,9 +72,29 @@
 			</div>
 			<div id="donutchart2"style="float:right;width:400px"><svg></svg>	
 			</div>
+		<div id="explorerviewvizdiv">
+			<div id="graphviz" style="height:70%;"></div>
+			<div id="statvizes" style="height:30%;">
+			<div id="barchart" style="float:left;width:33%;"><svg></svg>			
+			</div>
+			<div id="donutchart1" style="float:left;width:33%;"><svg></svg>		
+			</div>
+			<div id="donutchart2"style="float:right;width:33%;"><svg></svg>	
+			</div>
+			</div>
+		</div>
+		<div id="predictionviewvizdiv" class="hide">
 		</div>
 	</div>		
+	</div>
 	<div id="sidepanel" class="col-sm-2" style="background-color:gray;height:100%;">
+		<div id="modeselect" align="center" >
+			<form>
+			<input onchange="changeMode()" type="radio" name="sex" id="explorerview" value="male" checked="true"><span style="color:white">Explore</span>&nbsp;&nbsp;&nbsp;&nbsp;
+			<input type="radio" onchange="changeMode()" name="sex" id="predictionview" value="female"><span style="color:white">Predict</span>
+			</form> 
+		</div>
+		<div id="explorationviewpanel">
 		<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
 			  <div class="panel panel-default">
 				<div class="panel-heading" role="tab" id="headingOne">
@@ -137,8 +157,12 @@
 				</div>
 			  </div>
 		</div>
+		<div id="predictionviewpanel" class="hide">
+			hi
+		</div>
 		<div align="center">
-		<button id="datefilterapplybutton">Apply Filters</button>
+		<button id="applyfilterbutton">Apply Filters</button>
+		</div>
 		</div>
 	</div>	
 </body>
@@ -221,6 +245,38 @@
 		//console.log(minWeight,maxWeight)
 		globalLinks = resList.slice();
 	}
+
+	function changeMode(){
+		var showExplorerView = 0 , showPredictionview = 0;
+		if($('#explorerview').is(':checked')){
+			showExplorerView = 1;
+		}else if($('#predictionview').is(':checked')){
+			showPredictionview = 1;
+		}
+		//console.log(showExplorerView,showPredictionview)
+		if(showExplorerView==1){
+			$("#predictionviewpanel").removeClass("show");
+			$("#predictionviewpanel").addClass("hide");
+			$("#predictionviewvizdiv").removeClass("show");
+			$("#predictionviewvizdiv").addClass("hide");
+
+			$("#explorationviewpanel").removeClass("hide");
+			$("#explorationviewpanel").addClass("show");
+			$("#explorerviewvizdiv").removeClass("hide");
+			$("#explorerviewvizdiv").addClass("show");
+		}else if(showPredictionview==1){
+			$("#explorationviewpanel").removeClass("show");
+			$("#explorationviewpanel").addClass("hide");
+			$("#explorerviewvizdiv").removeClass("show");
+			$("#explorerviewvizdiv").addClass("hide");
+
+			$("#predictionviewpanel").removeClass("hide");
+			$("#predictionviewpanel").addClass("show");
+			$("#predictionviewvizdiv").removeClass("hide");
+			$("#predictionviewvizdiv").addClass("show");
+		}
+	}
+
 </script>
 <script type="text/javascript" src="js/graph.js"></script>
 </html>
